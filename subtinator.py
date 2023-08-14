@@ -30,6 +30,13 @@ def pageNum(req):
 def parsePage(pagenum,req):
     url="https://rapiddns.io/s/"
     lt = []
+    # premier passage pour éviter de perdre les données si une seule page existante
+    soup = BeautifulSoup(req, 'html.parser')
+    tbody = soup.find('tbody')
+    for tr in tbody.find_all('tr'):
+            td = tr.find('td')  # Get the first <td> tag
+            lt.append(td.text)
+            
     # ajout ?page=num_id pour parser
     page = "?page="
     time.sleep(0.5)
@@ -45,7 +52,6 @@ def parsePage(pagenum,req):
         soup = BeautifulSoup(req, 'html.parser')
         tbody = soup.find('tbody')
 
-
         for tr in tbody.find_all('tr'):
             td = tr.find('td')  # Get the first <td> tag
             lt.append(td.text)
@@ -58,7 +64,8 @@ def parsePage(pagenum,req):
 
 # Fonctions pour crt.sh
 
-def crtShReq(lt,domain):
+def crtShReq(domain):
+    lt = []
     crt_url="https://crt.sh/?q="
     output="&output=json"
     r = requests.get(crt_url+str(domain_name)+output)
@@ -73,9 +80,24 @@ def crtShReq(lt,domain):
             unformated_name = extracted[domain]['name_value']
             formated = unformated_name.split()[0]
             lt.append(formated)
-    lt = set(lt)
-    lt = list(lt)
-    return lt
+        return lt
+
+# récupère les deux tableaux, trie / fusionne:
+def fusionTab(lt1,lt2):
+    if len(lt2) == 0:
+        lt1 = set(lt1)
+        lt1 = list(lt1)
+        return lt1
+    else:
+        lt = []
+        for i in lt1:
+            lt.append(i)
+        for i in lt2:
+            lt.append(i)
+        lt = set(lt)
+        lt = list(lt)
+        return lt
+
 
 def saveFile(lt):
     print(f'[*] {len(lt)} domains found for {domain_name}\n')
@@ -99,8 +121,10 @@ rdns_parsed = parsePage(rdns_page_numbers,rapiddns)
 # puis crt.sh
 print('-'*30)
 print('[*] Trying to search domains on crt.sh')
-subCrt = crtShReq(rdns_parsed,domain_name)
-saveFile(subCrt)
+subCrt = crtShReq(domain_name)
+# verif pour éviter liste vide si liste 2 aucun résultats
+final = fusionTab(rdns_parsed,subCrt)
+saveFile(final)
 print("[*] Please wait until the program finish.")
 time.sleep(2)
 print('-'*30)
