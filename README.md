@@ -1,8 +1,9 @@
 # subtinator 
-## currently in alpha v0.2
+## currently in alpha v0.3
 
 ```diff
 ++ Added rapiddns searching
+++ Correction of bad table input
 ```
 ## What it does  
 
