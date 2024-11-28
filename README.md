@@ -1,13 +1,13 @@
 # subtinator 
-## currently in alpha v0.3
+## currently in alpha v0.4
 
 ```diff
-++ Added rapiddns searching
-++ Correction of bad table input
+++ Added Multi DNS search
+++ Add auto create folder for the exports of subdns founds
 ```
 ## What it does  
 
-Subtinator is a tool that help me to enum subdomains through crt.sh (currently).
+Subtinator is a tool that help me to enum subdomains through crt.sh and rapiddns.
 It will be added some more subfinder throughout the version.  
 
 ## How it work
